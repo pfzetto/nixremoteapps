@@ -96,7 +96,7 @@ in
       };
       passwordFile = mkOption {
         description = "path to a file containing the password";
-        type = with types; nullOr path;
+        type = with types; nullOr (either path str);
         default = null;
       };
       extraFlags = mkOption {
