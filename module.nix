@@ -30,7 +30,7 @@ let
       /wm-class:"${app.fullName}" \
       ${if cfg.sharePrinters then "/printer" else ""} \
       /shell:rdpinit.exe \
-      /app:program:"${app.winExecutable}",icon:"${app.icon}",file:"$FILE_PATH"
+      /app:program:"${app.winExecutable}",icon:"${app.icon}",cmd:"$FILE_PATH"
   '';
 
 
