@@ -10,7 +10,7 @@ let
   in
   pkgs.writeShellScriptBin "startremoteapp-${name}.sh"
   ''
-    FILE_PATH=$(${cfg.pathTransform} < $1)
+    FILE_PATH=$(echo $1 | ${cfg.pathTransform})
 
     ${passwordSrc} | \
     ${pkgs.freerdp3}/bin/xfreerdp \
@@ -30,7 +30,7 @@ let
       /wm-class:"${app.fullName}" \
       ${if cfg.sharePrinters then "/printer" else ""} \
       /shell:rdpinit.exe \
-      /app:program:"${app.winExecutable}",icon:"${app.icon}",cmd:"$FILE_PATH"
+      /app:program:"${app.winExecutable}",icon:"${app.icon}",cmd:"\"$FILE_PATH\""
   '';
 
 
