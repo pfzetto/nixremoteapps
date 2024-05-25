@@ -3,7 +3,7 @@ A NixOS Home-Manager Module that works similarly to [Winapps](https://github.com
 # Usage
 1. Import the module.
 2. Use the `remoteapps`-key to configure the module.
-3. Desktop Entries and `startremoteapp-<name>.sh`-scripts will be available ofter rebuild
+3. Desktop Entries and `startremoteapp-<name>.sh`-scripts will be available after rebuild
 
 # Configuration
 See [`module.nix`](./module.nix).

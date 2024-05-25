@@ -10,6 +10,8 @@ let
   in
   pkgs.writeShellScriptBin "startremoteapp-${name}.sh"
   ''
+    FILE_PATH=$(${cfg.pathTransform} < $1)
+
     ${passwordSrc} | \
     ${pkgs.freerdp3}/bin/xfreerdp \
       ${toString cfg.extraFlags} \
@@ -28,13 +30,13 @@ let
       /wm-class:"${app.fullName}" \
       ${if cfg.sharePrinters then "/printer" else ""} \
       /shell:rdpinit.exe \
-      /app:program:"${app.winExecutable}",icon:"${app.icon}",cmd:"$@"
+      /app:program:"${app.winExecutable}",icon:"${app.icon}",file:"$FILE_PATH"
   '';
 
 
   applicationOpts = { name, config, ...}: {
     options = {
-      enable = mkEnableOption "Wether to enable the application";
+      enable = mkEnableOption "whether to enable the application";
       fullName = mkOption {
         type = types.str;
         description = "Full Name of the application";
@@ -66,42 +68,64 @@ in
   options = {
     remoteapps = {
       domain  = mkOption {
+        description = "domain to log in with";
         type = with types; nullOr str;
         default = null;
       };
-      host  = mkOption {
+      host = mkOption {
+        description = "address of rdp server";
         type = with types; str;
       };
       port = mkOption {
+        description = "port of the rdp server";
         type = with types; port;
         default = 3389;
       };
       user = mkOption {
+        description = "user to log in with";
         type = with types; str;
       };
       password = mkOption {
+        description = ''
+          password to log in with
+          WARNING: stored in clear-text in nix store.
+          Use `passwordFile` instead.
+        '';
         type = with types; nullOr str;
         default = null;
       };
       passwordFile = mkOption {
+        description = "path to a file containing the password";
         type = with types; nullOr path;
         default = null;
       };
       extraFlags = mkOption {
+        description = "additional arguments for `xfreerdp`";
         type = with types; nullOr str;
         default = null;
       };
       multiMon = mkOption {
+        description = "whether to enable /multimon or +span";
         type = with types; bool;
         default = false;
       };
       scale = mkOption {
+        description = "scale of the remote app in percent";
         type = with types; int;
         default = 100;
       };
       sharePrinters = mkOption {
+        description = "whether to enable the /printer flag";
         type = with types; bool;
         default = false;
+      };
+      pathTransform = mkOption {
+        type = with types; path;
+        description = ''A program that transforms a unix path to a windows path'';
+        default = pkgs.writeShellScript "default-path-transform.sh" ''
+            INPUT=$(cat)
+            echo INPUT
+        '';
       };
       apps = mkOption {
         type = with types; attrsOf (submodule applicationOpts);
